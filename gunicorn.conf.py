@@ -1,16 +1,20 @@
 # Gunicorn configuration file
-import multiprocessing
+# Optimized for Render's free tier with limited memory
 
 # Server socket
 bind = "0.0.0.0:10000"
-backlog = 2048
+backlog = 256
 
-# Worker processes
-workers = multiprocessing.cpu_count() * 2 + 1
+# Worker processes - reduced for lower memory usage
+workers = 2  # Reduced from dynamic calculation
 worker_class = 'sync'
-worker_connections = 1000
-timeout = 30
+worker_connections = 200
+timeout = 120
 keepalive = 2
+
+# Reduce worker memory usage
+max_requests = 250
+max_requests_jitter = 50
 
 # Logging
 accesslog = '-'
@@ -19,3 +23,9 @@ loglevel = 'info'
 
 # Process naming
 proc_name = 'gunicorn_process'
+
+# Worker timeout
+graceful_timeout = 120
+
+# Reduce buffer size
+worker_tmp_dir = '/dev/shm'
