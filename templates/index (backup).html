@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YouTube Transcript Fetcher</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 70%;
+            padding: 8px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            white-space: pre-wrap;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .loading {
+            display: none;
+            color: #666;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>YouTube Transcript Fetcher</h1>
+    
+    <div class="input-group">
+        <input type="text" id="videoUrl" placeholder="Enter YouTube URL">
+        <button onclick="getTranscript()">Get Transcript</button>
+    </div>
+
+    <div id="loading" class="loading">Loading transcript...</div>
+    <div id="result"></div>
+
+    <script>
+        function getTranscript() {
+            const videoUrl = document.getElementById('videoUrl').value;
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+
+            if (!videoUrl) {
+                alert('Please enter a YouTube URL');
+                return;
+            }
+
+            loading.style.display = 'block';
+            result.textContent = '';
+
+            fetch('/get_transcript', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url: videoUrl })
+            })
+            .then(response => response.json())
+            .then(data => {
+                loading.style.display = 'none';
+                if (data.error) {
+                    result.textContent = `Error: ${data.error}`;
+                } else {
+                    result.textContent = data.transcript;
+                }
+            })
+            .catch(error => {
+                loading.style.display = 'none';
+                result.textContent = `Error: ${error.message}`;
+            });
+        }
+    </script>
+</body>
+</html>
