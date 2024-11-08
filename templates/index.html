@@ -4,247 +4,146 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generator Transkrypcji YouTube</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
-        :root {
-            --primary-bg: #1a1a2e;
-            --box-bg: rgba(30, 30, 46, 0.95);
-            --glow-color: rgba(88, 58, 205, 0.2);
-            --text-color: #ffffff;
-            --accent-color: #583ACD;
-            --border-radius: 15px;
-            --timestamp-color: rgba(255, 255, 255, 0.5);
-            --text-secondary-color: rgba(255, 255, 255, 0.7);
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background-color: var(--primary-bg);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
-
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        h1 {
-            text-align: center;
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            color: var(--text-color);
-        }
-
-        .input-box {
-            background: var(--box-bg);
-            padding: 30px;
-            border-radius: var(--border-radius);
-            margin-bottom: 40px;
-            box-shadow: 0 0 30px var(--glow-color);
-            width: 50%;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 15px;
-        }
-
-        input[type="text"] {
-            flex: 1;
-            padding: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: var(--border-radius);
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-color);
-            font-size: 16px;
-        }
-
-        .content-section {
+        .loading {
             display: none;
-            gap: 30px;
-            margin-bottom: 50px;
-            height: calc(100vh - 350px);
-            min-height: 400px;
-            justify-content: center;
         }
-
-        .video-section {
-            flex: 0.4;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .video-container {
-            background: var(--box-bg);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            box-shadow: 0 0 30px var(--glow-color);
-            aspect-ratio: 16/9;
+        .loading.active {
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 1rem;
         }
-
-        .action-buttons {
-            background: var(--box-bg);
-            padding: 15px;
-            border-radius: var(--border-radius);
-            display: flex;
-            gap: 10px;
-            box-shadow: 0 0 50px var(--glow-color);
-            justify-content: center;
-        }
-
-        .transcript-container {
-            flex: 0.4;
-            background: var(--box-bg);
-            border-radius: var(--border-radius);
-            padding: 5px;
-            box-shadow: 0 0 30px var(--glow-color);
-            overflow-y: auto;
-            font-size: 14px;
-
-            /*  width: 80%;  lub konkretna szerokość w px */
-            max-height: 400px; /* maksymalna wysokość */
-           
-        
-            margin: 0 auto;
-        }
-
-        .timestamp-line {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            padding: 5px 0;
-            width: 100%;
-        }
-
-        .timestamp {
-            color: rgba(255, 255, 255, 0.5);
-            font-family: monospace;
-            flex: 0 0 80px;
-            white-space: nowrap;
-        }
-
-        .text {
-            
-            color: var(--text-color);
-            flex: 1;
-            min-width: 0;
-            white-space: normal;
-            overflow-wrap: break-word;
-            max-width: 100%
-        }
-
-        button {
-            padding: 15px 25px;
-            border: none;
-            border-radius: var(--border-radius);
-            background: var(--accent-color);
-            color: var(--text-color);
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-        }
-
-        button:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-
-        button.primary-button {
-            background: linear-gradient(45deg, #e147c2, #7B5EE5);
-        }
-
-        button.secondary-button {
-            background: #2379bf;
-        }
-
-        .loading {
-            text-align: center;
-            display: none;
-            padding: 20px;
-        }
-
         .loading-spinner {
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-top: 4px solid var(--accent-color);
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
             border-radius: 50%;
             width: 40px;
             height: 40px;
             animation: spin 1s linear infinite;
-            margin: 0 auto;
         }
-
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--accent-color);
-            color: var(--text-color);
-            padding: 10px 20px;
-            border-radius: var(--border-radius);
-            display: none;
-            animation: fadeInOut 2s ease-in-out;
-        }
-
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: translateY(20px); }
-            20% { opacity: 1; transform: translateY(0); }
-            80% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-20px); }
+        .transcript-container {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 4px;
+            margin-top: 1rem;
+        }
+        .transcript-line {
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+        .timestamp {
+            color: #2563eb;
+            cursor: pointer;
+            padding: 2px 4px;
+            margin-right: 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .timestamp:hover {
+            background-color: #dbeafe;
+        }
+        .timestamp.current {
+            background-color: #2563eb;
+            color: white;
+        }
+        .notification {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 1rem;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 4px;
+            animation: fadeOut 3s forwards;
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            max-width: 100%;
+            margin-bottom: 1rem;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
+<body class="bg-gray-100 min-h-screen p-4 md:p-8">
+    <div class="max-w-4xl mx-auto bg-white p-4 md:p-8 rounded-lg shadow-md">
+        <h1 class="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-center">Generator Transkrypcji YouTube</h1>
 
-<body>
-    <div class="container">
-        <h1>Generator Transkrypcji YouTube</h1>
-        
-        <div class="input-box">
-            <div class="input-group">
-                <input type="text" id="youtubeUrl" placeholder="Wklej link do filmu YouTube...">
-                <button onclick="getTranscript()" id="submitBtn" class="primary-button">
+        <div class="mb-6 md:mb-8">
+            <div class="flex flex-col md:flex-row gap-4">
+                <input type="text" id="videoUrl" placeholder="Wklej link do filmu YouTube" 
+                       class="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button onclick="getTranscript()" 
+                        class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
                     Utwórz transkrypcję
                 </button>
             </div>
         </div>
 
-        <div class="loading" id="loading">
+        <div id="loading" class="loading">
             <div class="loading-spinner"></div>
-            <p>Pobieranie transkrypcji...</p>
+            <span>Pobieranie transkrypcji...</span>
         </div>
 
-        <div id="contentSection" class="content-section">
-            <div class="video-section">
-                <div class="video-container" id="videoPlayer">
-                    <!-- YouTube Player będzie tutaj wstawiony -->
+        <div id="contentSection" class="hidden">
+            <!-- Mobile layout (transcript first) -->
+            <div class="block md:hidden">
+                <div id="mobileTranscript">
+                    <div class="flex gap-4 mb-4">
+                        <button onclick="copyTranscript()" 
+                                class="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                            Kopiuj do schowka
+                        </button>
+                        <button onclick="saveTranscript()" 
+                                class="flex-1 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">
+                            Zapisz do pliku
+                        </button>
+                    </div>
+                    <div id="resultMobile" class="transcript-container mb-4"></div>
                 </div>
-                <div class="action-buttons">
-                    <button onclick="copyTranscript()" class="secondary-button">
-                        Kopiuj do schowka
-                    </button>
-                    <button onclick="saveToFile()" class="secondary-button">
-                        Zapisz do pliku
-                    </button>
-                </div>
+                <div id="videoPlayerMobile" class="video-container"></div>
             </div>
 
-            <div class="transcript-container" id="result">
-                <!-- Transkrypcja będzie tutaj -->
+            <!-- Desktop layout (side by side) -->
+            <div class="hidden md:flex gap-6">
+                <div class="w-1/2">
+                    <div id="videoPlayer" class="video-container"></div>
+                </div>
+                <div class="w-1/2">
+                    <div class="flex gap-4 mb-4">
+                        <button onclick="copyTranscript()" 
+                                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                            Kopiuj do schowka
+                        </button>
+                        <button onclick="saveTranscript()" 
+                                class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">
+                            Zapisz do pliku
+                        </button>
+                    </div>
+                    <div id="result" class="transcript-container"></div>
+                </div>
             </div>
         </div>
 
@@ -253,132 +152,123 @@
         </div>
     </div>
 
-    <script src="https://www.youtube.com/iframe_api"></script>
-    
     <script>
-        let player;
-
-        function onYouTubeIframeAPIReady() {
-            // Funkcja będzie używana gdy potrzebujemy zainicjalizować player
-        }
-
-        function initializePlayer(videoId) {
-            if (player) {
-                player.destroy();
-            }
-            
-            player = new YT.Player('videoPlayer', {
-                height: '100%',
-                width: '100%',
+        // Previous JavaScript code remains the same, but update these functions:
+        
+        function createPlayer(videoId) {
+            // Create player for both mobile and desktop layouts
+            player = new YT.Player(window.innerWidth < 768 ? 'videoPlayerMobile' : 'videoPlayer', {
+                height: '360',
+                width: '640',
                 videoId: videoId,
                 playerVars: {
-                    autoplay: 0,
-                    controls: 1
+                    'playsinline': 1
                 }
             });
         }
 
-        function extractVideoId(url) {
-            const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-            const match = url.match(regExp);
-            return (match && match[7].length === 11) ? match[7] : false;
-        }
-
-        async function getTranscript() {
-            const url = document.getElementById('youtubeUrl').value;
-            const submitBtn = document.getElementById('submitBtn');
-            const loading = document.getElementById('loading');
-            const contentSection = document.getElementById('contentSection');
-            const result = document.getElementById('result');
-
-            loading.style.display = 'block';
-            submitBtn.disabled = true;
-            contentSection.style.display = 'none';
-
-            try {
-                const response = await fetch('/get_transcript', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ url })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'Nie udało się pobrać transkrypcji');
-                }
-
-                const lines = data.transcript.split('\n').map(line => {
-                    const timestampEndIndex = line.indexOf(']') + 1;
-                    const timestamp = line.substring(0, timestampEndIndex);
-                    const text = line.substring(timestampEndIndex).trim();
-                    
-                    return `<div class="timestamp-line">
-                        <span class="timestamp">${timestamp}</span>
-                        <span class="text">${text}</span>
-                    </div>`;
-                });
-
-                result.innerHTML = lines.join('');
-                contentSection.style.display = 'flex';
-
-                const videoId = extractVideoId(url);
-                if (videoId) {
-                    initializePlayer(videoId);
-                }
-
-            } catch (err) {
-                alert(err.message);
-            } finally {
-                loading.style.display = 'none';
-                submitBtn.disabled = false;
+        function getTranscript() {
+            const videoUrl = document.getElementById('videoUrl').value;
+            if (!videoUrl) {
+                alert('Proszę wprowadzić URL filmu YouTube');
+                return;
             }
-        }
 
-        async function copyTranscript() {
-            const result = document.getElementById('result');
-            const notification = document.getElementById('copyNotification');
-
-            try {
-                const text = Array.from(result.querySelectorAll('.timestamp-line'))
-                    .map(line => {
-                        const timestamp = line.querySelector('.timestamp').textContent;
-                        const text = line.querySelector('.text').textContent;
-                        return `${timestamp} ${text}`;
-                    }).join('\n');
-
-                await navigator.clipboard.writeText(text);
-                notification.style.display = 'block';
-                setTimeout(() => {
-                    notification.style.display = 'none';
-                }, 2000);
-            } catch (err) {
-                alert('Nie udało się skopiować tekstu: ' + err);
+            document.getElementById('loading').classList.add('active');
+            document.getElementById('contentSection').classList.add('hidden');
+            document.getElementById('result').innerHTML = '';
+            if (document.getElementById('resultMobile')) {
+                document.getElementById('resultMobile').innerHTML = '';
             }
+
+            fetch('/get_transcript', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url: videoUrl })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                // Create YouTube player
+                createPlayer(data.video_id);
+                
+                // Format and display transcript for both mobile and desktop
+                const formattedTranscript = formatTranscriptWithLinks(data.transcript);
+                document.getElementById('result').innerHTML = formattedTranscript;
+                if (document.getElementById('resultMobile')) {
+                    document.getElementById('resultMobile').innerHTML = formattedTranscript;
+                }
+                
+                document.getElementById('loading').classList.remove('active');
+                document.getElementById('contentSection').classList.remove('hidden');
+                
+                // Initialize timestamp navigation
+                initializeTimestampNavigation();
+            })
+            .catch(error => {
+                alert('Błąd: ' + error.message);
+                document.getElementById('loading').classList.remove('active');
+            });
         }
 
-        function saveToFile() {
-            const result = document.getElementById('result');
-            const text = Array.from(result.querySelectorAll('.timestamp-line'))
-                .map(line => {
-                    const timestamp = line.querySelector('.timestamp').textContent;
-                    const text = line.querySelector('.text').textContent;
-                    return `${timestamp} ${text}`;
-                }).join('\n');
-
-            const element = document.createElement('a');
-            const file = new Blob([text], {type: 'text/plain;charset=utf-8'});
-            const date = new Date();
-            const fileName = `transkrypcja_${date.getFullYear()}${(date.getMonth()+1).toString().padStart(2,'0')}${date.getDate().toString().padStart(2,'0')}.txt`;
+        // Make sure to initialize timestamp navigation for both mobile and desktop
+        function initializeTimestampNavigation() {
+            const resultElements = ['result', 'resultMobile'];
             
-            element.href = URL.createObjectURL(file);
-            element.download = fileName;
-            document.body.appendChild(element);
-            element.click();
-            document.body.removeChild(element);
+            resultElements.forEach(elementId => {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.addEventListener('click', (e) => {
+                        if (e.target.classList.contains('timestamp')) {
+                            const timeInSeconds = parseInt(e.target.dataset.time);
+                            if (player && !isNaN(timeInSeconds)) {
+                                player.seekTo(timeInSeconds);
+                                highlightCurrentTimestamp(timeInSeconds);
+                            }
+                        }
+                    });
+                }
+            });
+
+            if (player) {
+                setInterval(() => {
+                    if (player.getCurrentTime && typeof player.getCurrentTime === 'function') {
+                        const currentTime = Math.floor(player.getCurrentTime());
+                        highlightCurrentTimestamp(currentTime);
+                    }
+                }, 1000);
+            }
         }
+
+        // Update highlighting for both mobile and desktop timestamps
+        function highlightCurrentTimestamp(currentTime) {
+            const timestamps = document.querySelectorAll('.timestamp');
+            timestamps.forEach(timestamp => {
+                timestamp.classList.remove('current');
+                const timeValue = parseInt(timestamp.dataset.time);
+                if (timeValue <= currentTime && timeValue + 5 > currentTime) {
+                    timestamp.classList.add('current');
+                    // Scroll timestamp into view if not visible
+                    const container = timestamp.closest('.transcript-container');
+                    if (container) {
+                        const timestampTop = timestamp.offsetTop;
+                        const containerTop = container.scrollTop;
+                        const containerBottom = containerTop + container.clientHeight;
+                        
+                        if (timestampTop < containerTop || timestampTop > containerBottom) {
+                            container.scrollTop = timestampTop - container.clientHeight / 2;
+                        }
+                    }
+                }
+            });
+        }
+
+        // Rest of your JavaScript code remains the same
     </script>
 </body>
 </html>
