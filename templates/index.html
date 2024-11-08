@@ -23,15 +23,13 @@
             margin: 0;
             padding: 20px;
             min-height: 100vh;
+
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
 
         h1 {
@@ -39,7 +37,6 @@
             font-size: 2.5em;
             margin-bottom: 20px;
             color: var(--text-color);
-            width: 100%;
         }
 
         .input-box {
@@ -48,8 +45,9 @@
             border-radius: var(--border-radius);
             margin-bottom: 40px;
             box-shadow: 0 0 30px var(--glow-color);
-            width: 90%;
-            max-width: 800px;
+            width: 50%;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .input-group {
@@ -70,10 +68,17 @@
         .content-section {
             display: none;
             gap: 30px;
-            width: 100%;
             margin-bottom: 50px;
+            height: calc(100vh - 350px);
             min-height: 400px;
             justify-content: center;
+        }
+
+        .video-section {
+            flex: 0.4;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
         .video-container {
@@ -81,20 +86,10 @@
             border-radius: var(--border-radius);
             padding: 20px;
             box-shadow: 0 0 30px var(--glow-color);
-            position: relative;
-            width: 100%;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-        }
-
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
+            aspect-ratio: 16/9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .action-buttons {
@@ -105,21 +100,22 @@
             gap: 10px;
             box-shadow: 0 0 50px var(--glow-color);
             justify-content: center;
-            width: 100%;
-            box-sizing: border-box;
         }
 
         .transcript-container {
-            flex: 1;
+            flex: 0.4;
             background: var(--box-bg);
             border-radius: var(--border-radius);
-            padding: 15px;
+            padding: 5px;
             box-shadow: 0 0 30px var(--glow-color);
             overflow-y: auto;
             font-size: 14px;
-            max-height: 400px;
-            width: 100%;
-            box-sizing: border-box;
+
+            /*  width: 80%;  lub konkretna szerokość w px */
+            max-height: 400px; /* maksymalna wysokość */
+           
+        
+            margin: 0 auto;
         }
 
         .timestamp-line {
@@ -131,18 +127,20 @@
         }
 
         .timestamp {
-            color: var(--timestamp-color);
+            color: rgba(255, 255, 255, 0.5);
             font-family: monospace;
             flex: 0 0 80px;
             white-space: nowrap;
         }
 
         .text {
+            
             color: var(--text-color);
             flex: 1;
             min-width: 0;
             white-space: normal;
             overflow-wrap: break-word;
+            max-width: 100%
         }
 
         button {
@@ -168,14 +166,12 @@
 
         button.secondary-button {
             background: #2379bf;
-            flex: 1;
         }
 
         .loading {
             text-align: center;
             display: none;
             padding: 20px;
-            width: 100%;
         }
 
         .loading-spinner {
@@ -211,110 +207,9 @@
             80% { opacity: 1; transform: translateY(0); }
             100% { opacity: 0; transform: translateY(-20px); }
         }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-
-            .container {
-                width: 80%;
-                padding: 10px;
-            }
-
-            h1 {
-                font-size: 1.8em;
-                margin-bottom: 15px;
-            }
-
-            .input-box {
-                padding: 15px;
-                width: 100%;
-                margin-bottom: 20px;
-            }
-
-            .input-group {
-                flex-direction: column;
-            }
-
-            .input-group input[type="text"] {
-                width: 100%;
-                margin-bottom: 10px;
-            }
-
-            .content-section {
-                height: auto;
-                display: flex;
-                flex-direction: column;
-                gap: 15px;
-                align-items: center;
-            }
-
-            .transcript-container {
-                order: 1;
-                max-height: 300px;
-                margin-bottom: 15px;
-                width: 100%;
-            }
-
-            .action-buttons {
-                order: 2;
-                margin-bottom: 15px;
-                width: 100%;
-            }
-
-            .video-section {
-                order: 3;
-                width: 100%;
-            }
-
-            button {
-                padding: 12px 20px;
-                font-size: 14px;
-            }
-
-            .timestamp-line {
-                padding: 8px 5px;
-            }
-
-            .timestamp {
-                font-size: 12px;
-            }
-
-            .text {
-                font-size: 14px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                width: 90%;
-            }
-
-            h1 {
-                font-size: 1.5em;
-            }
-
-            .input-box {
-                padding: 10px;
-            }
-
-            button {
-                padding: 10px 15px;
-                font-size: 13px;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .action-buttons button {
-                width: 100%;
-            }
-        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>Generator Transkrypcji YouTube</h1>
@@ -334,19 +229,22 @@
         </div>
 
         <div id="contentSection" class="content-section">
-            <div class="transcript-container" id="result"></div>
-            
-            <div class="action-buttons">
-                <button onclick="copyTranscript()" class="secondary-button">
-                    Kopiuj do schowka
-                </button>
-                <button onclick="saveToFile()" class="secondary-button">
-                    Zapisz do pliku
-                </button>
+            <div class="video-section">
+                <div class="video-container" id="videoPlayer">
+                    <!-- YouTube Player będzie tutaj wstawiony -->
+                </div>
+                <div class="action-buttons">
+                    <button onclick="copyTranscript()" class="secondary-button">
+                        Kopiuj do schowka
+                    </button>
+                    <button onclick="saveToFile()" class="secondary-button">
+                        Zapisz do pliku
+                    </button>
+                </div>
             </div>
 
-            <div class="video-section">
-                <div class="video-container" id="videoPlayer"></div>
+            <div class="transcript-container" id="result">
+                <!-- Transkrypcja będzie tutaj -->
             </div>
         </div>
 
@@ -362,7 +260,6 @@
 
         function onYouTubeIframeAPIReady() {
             // Funkcja będzie używana gdy potrzebujemy zainicjalizować player
-            console.log('YouTube API Ready');
         }
 
         function initializePlayer(videoId) {
@@ -370,19 +267,13 @@
                 player.destroy();
             }
             
-            const playerContainer = document.getElementById('videoPlayer');
-            playerContainer.innerHTML = '';
-            
             player = new YT.Player('videoPlayer', {
                 height: '100%',
                 width: '100%',
                 videoId: videoId,
                 playerVars: {
                     autoplay: 0,
-                    controls: 1,
-                    playsinline: 1,
-                    modestbranding: 1,
-                    rel: 0
+                    controls: 1
                 }
             });
         }
@@ -400,15 +291,9 @@
             const contentSection = document.getElementById('contentSection');
             const result = document.getElementById('result');
 
-            if (!url) {
-                alert('Proszę wprowadzić URL filmu YouTube');
-                return;
-            }
-
             loading.style.display = 'block';
             submitBtn.disabled = true;
             contentSection.style.display = 'none';
-            result.innerHTML = '';
 
             try {
                 const response = await fetch('/get_transcript', {
@@ -494,13 +379,6 @@
             element.click();
             document.body.removeChild(element);
         }
-
-        // Obsługa zmiany rozmiaru okna
-        window.addEventListener('resize', function() {
-            const videoId = extractVideoId(document.getElementById('youtubeUrl').value);
-            if (videoId && player) {
-                initializePlayer(videoId);
-            }
-        });
     </script>
 </body>
+</html>
